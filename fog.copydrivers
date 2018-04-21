@@ -1,0 +1,102 @@
+#!/bin/bash
+ceol=`tput el`;
+manu=`dmidecode -s system-manufacturer`;
+dots "Identifying hardware"
+case $manu in
+    [Ll][Ee][Nn][Oo][Vv][Oo])
+        machine=$(dmidecode -s system-version)
+        ;;
+    *[Dd][Ee][Ll][Ll]*)
+        machine=$(dmidecode -s system-product-name)
+        ;;
+    *I[Nn][Tt][Ee][Ll]*)
+        # For the Intel NUC and intel mobo pick up the system type from the
+        # baseboard product name
+        machine=$(dmidecode -s baseboard-product-name)
+        ;;
+    *)
+        # Technically, we can remove the Dell entry above as it is the same as this [default]
+        machine=$(dmidecode -s system-product-name) 
+        ;;
+esac
+
+# if the machine isn't identified then no need to continue with this script, just return to caller
+if [[ -z $machine ]]; then 
+    echo "Unable to identify the hardware for manufacturer ${manu}";
+    debugPause;
+    return;
+fi 
+echo "${machine} Identified";
+
+# Removes spaces, make lowercase in machine name, works better with path definitions
+
+#machine="${machine%"${machine##*[![:space:]]}"}";
+
+machine=$(echo $machine | sed -e 's/ //g' | tr '[:upper:]' '[:lower:]')
+
+dots "Verifying we've found the OS disk"
+if [[ ! -d /ntfs/windows && ! -d /ntfs/Windows && ! -d /ntfs/WINDOWS ]]; then
+    echo "! OS root Not found !";
+    debugPause
+    return;
+fi
+echo "Found";
+        
+dots "Verifying target Arch"
+system64="/ntfs/Windows/SysWOW64/regedit.exe"
+[[ ! -f $system64 ]] && arch="x86" || arch="x64"
+echo "${arch} found";
+
+debugPause
+
+# set osn path names based on the osid set in the FOG WebGui
+case $osid in
+    5) osn="win7" ;;
+    6) osn="win8" ;;
+    7) osn="win8.1" ;;
+    9) osn="win10" ;;
+esac
+
+dots "Preparing Drivers"
+clientdriverpath="/ntfs/Drivers"
+remotedriverpath="/images/drivers/$machine/$osn/$arch"
+
+debugPause
+
+if [[ ! -d "${remotedriverpath}" ]]; then
+    echo "failed";
+    echo " ! Driver package not found for ${machine}/$osn/$arch ! ";
+    debugPause;
+    return;
+fi
+echo "Ready";
+
+debugPause
+
+[[ ! -d $clientdriverpath ]] && mkdir -p "$clientdriverpath" >/dev/null 2>&1
+echo -n "In Progress"
+
+rsync -aqz "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
+
+[[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$machine/$osn/$arch]"
+
+debugPause
+
+dots "Editing Registry"
+regfile="/ntfs/Windows/System32/config/SOFTWARE"
+key="\Microsoft\Windows\CurrentVersion\DevicePath"
+devpath="%SystemRoot%\inf;%HomeDrive%\Drivers";
+reged -e "$regfile" &>/dev/null <<EOFREG
+ed $key
+$devpath
+q
+y
+EOFREG
+echo "Done"
+
+debugPause
+
+dots "Creating SetupComplete.cmd"
+mkdir -p '/ntfs/Windows/Setup/Scripts'
+echo 'if exist %HomeDrive%\Drivers\x64\installdrivers.cmd call %HomeDrive%\Drivers\x64\installdrivers.cmd' >> '/ntfs/Windows/Setup/Scripts/SetupComplete.cmd'
+echo "Done"

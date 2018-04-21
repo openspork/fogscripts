@@ -1,0 +1,45 @@
+#!/bin/bash
+hostadpwd="ADPASSWDHERRE"; #only downside to this method- this is the plain ad password
+unattends=$(find /ntfs/ -iname "unattend.xml")
+for unattend in $unattends
+    [[ ! -f $unattend ]] && return
+    dots "Preparing Sysprep File"
+    #rm -f /ntfs/Windows/System32/sysprep/unattend.xml >/dev/null 2>&1
+    #if [[ ! $? -eq 0 ]]; then
+        #echo "Failed"
+        #debugPause
+        #handleError "Failed to remove original unattend file"
+    #fi
+    echo "Done"
+    debugPause
+    dots "Writing Computer Name to $unattend"
+    sed -i "/ComputerName/s/*/$hostname/g" $unattend >/dev/null 2>&1
+    if [[ ! $? -eq 0 ]]; then
+        echo "Failed"
+        debugPause
+        handleError "Failed to update originating unattend file"
+    fi
+    echo "Done"
+    echo "ComputerName set to $hostname in $unattend"
+    debugPause
+    [[ -z $addomain ]] && continue
+    dots "Set PC to join the domain"
+    sed -i "/<JoinWorkgroup>/d" $unattend >/dev/null 2>&1
+    if [[ ! $? -eq 0 ]]; then
+        echo "Failed"
+        debugPause
+        handleError "Failed to remove the Workgroup setter"
+    fi
+    sed -i \
+        -e "s|<Password></Password>|<Password>${hostadpwd}</Password>|g" \
+        -e "s|<Username></Username>|<Username>${addomain}\\\\${aduser}</Username>|g" \
+        -e "s|<MachineObjectOU></MachineObjectOU>|<MachineObjectOU>${adou}</MachineObjectOU>|g" \
+        -e "s|<JoinDomain></JoinDomain>|<JoinDomain>${addomain}</JoinDomain>|g" $unattend >/dev/null 2>&1
+    if [[ ! $? -eq 0 ]]; then
+        echo "Failed"
+        debugPause
+        handleError "Failed to update user, pass, ou, and domain setter"
+    fi
+    echo "Done"
+    debugPause
+done

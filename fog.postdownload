@@ -1,0 +1,6 @@
+#!/bin/bash
+## This file serves as a starting point to call your custom postimaging scripts.
+## <SCRIPTNAME> should be changed to the script you're planning to use.
+## Syntax of post download scripts are
+#. ${postdownpath}<SCRIPTNAME>
+. ${postdownpath}fog.custominstall
