@@ -61,8 +61,6 @@ dots "Preparing Drivers"
 clientdriverpath="/ntfs/Drivers"
 remotedriverpath="/images/drivers/$machine/$osn/$arch"
 
-debugPause
-
 if [[ ! -d "${remotedriverpath}" ]]; then
     echo "failed";
     echo " ! Driver package not found for ${machine}/$osn/$arch ! ";
@@ -74,29 +72,142 @@ echo "Ready";
 debugPause
 
 [[ ! -d $clientdriverpath ]] && mkdir -p "$clientdriverpath" >/dev/null 2>&1
-echo -n "In Progress"
+echo "In Progress"
 
-rsync -aqz "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
+rsync -aqzI "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
 
 [[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$machine/$osn/$arch]"
 
+echo "Done"
 debugPause
 
-dots "Editing Registry"
+dots "Setting Windows Driver Store Location"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows\CurrentVersion\DevicePath"
-devpath="%SystemRoot%\inf;%HomeDrive%\Drivers";
+devpath="%SystemRoot%\inf;%HomeDrive%\Drivers"
 reged -e "$regfile" &>/dev/null <<EOFREG
 ed $key
 $devpath
 q
 y
 EOFREG
+
 echo "Done"
+
+dots "Setting PowerShell ExecutionPolicy"
+regfile="/ntfs/Windows/System32/config/SOFTWARE"
+key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell\ExecutionPolicy"
+value="RemoteSigned"
+reged -e "$regfile" &>/dev/null <<EOFREG
+ed $key
+$value
+q
+y
+EOFREG
+
+echo "Done"
+
+dots "Configuring Auto Login"
+regfile="/ntfs/Windows/System32/config/SOFTWARE"
+
+key="\Microsoft\Windows NT\CurrentVersion\Winlogon"
+
+name2="AutoLogonCount"
+
+name1="AutoAdminLogon"
+value1="1"
+
+name2="AutoLogonCount"
+value2="5"
+
+name3="DefaultUserName"
+value3="Administrator"
+
+name4="DefaultPassword"
+value4="Pass1234"
+
+#enable autologin
+reged -e "$regfile" &>/dev/null <<EOFREG
+cd $key
+nv 1 $name1
+ed $name1
+$value1
+q
+y
+EOFREG
+
+#debugPause
+
+#set count
+reged -e "$regfile" <<EOFREG
+cd $key
+nv 4 $name2
+ed $name2
+$value2
+q
+y
+EOFREG
 
 debugPause
 
-dots "Creating SetupComplete.cmd"
-mkdir -p '/ntfs/Windows/Setup/Scripts'
-echo 'if exist %HomeDrive%\Drivers\x64\installdrivers.cmd call %HomeDrive%\Drivers\x64\installdrivers.cmd' >> '/ntfs/Windows/Setup/Scripts/SetupComplete.cmd'
+#set username
+reged -e "$regfile" <<EOFREG
+cd $key
+nv 1 $name3
+ed $name3
+$value3
+q
+y
+EOFREG
+
+debugPause
+
+#set password
+reged -e "$regfile" <<EOFREG
+cd $key
+nv 1 $name4
+ed $name4
+$value4
+q
+y
+EOFREG
+
 echo "Done"
+debugPause
+
+#set shell to script
+dots "Configuring driver install"
+regfile="/ntfs/Windows/System32/config/SOFTWARE"
+key="\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell"
+value="powershell -windowstyle hidden %HomeDrive%\Drivers\x64\installdrivers.ps1"
+
+reged -e "$regfile" &>/dev/null <<EOFREG
+ed $key
+$value
+q
+y
+EOFREG
+
+echo "Done"
+debugPause
+
+dots "Disabling Admin Approval Policy"
+
+regfile="/ntfs/Windows/System32/config/SOFTWARE"
+key="\Microsoft\Windows\CurrentVersion\Policies\System\FilterAdministratorToken"
+value="0"
+
+reged -e "$regfile" &>/dev/null <<EOFREG
+ed $key
+$value
+q
+y
+EOFREG
+
+echo "Done"
+debugPause
+
+# dots "Creating SetupComplete.cmd"
+# mkdir -p '/ntfs/Windows/Setup/Scripts'
+# echo 'powershell %HomeDrive%\Drivers\x64\installdrivers.ps1' >> '/ntfs/Windows/Setup/Scripts/SetupComplete.cmd'
+# echo "Done"
