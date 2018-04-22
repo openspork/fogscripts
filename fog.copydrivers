@@ -118,7 +118,7 @@ name1="AutoAdminLogon"
 value1="1"
 
 name2="AutoLogonCount"
-value2="5"
+value2="1"
 
 name3="DefaultUserName"
 value3="Administrator"
@@ -179,7 +179,7 @@ debugPause
 dots "Configuring driver install"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell"
-value="powershell -windowstyle hidden %HomeDrive%\Drivers\x64\installdrivers.ps1"
+value="powershell %HomeDrive%\Drivers\x64\installdrivers.ps1"
 
 reged -e "$regfile" &>/dev/null <<EOFREG
 ed $key
