@@ -47,7 +47,7 @@ system64="/ntfs/Windows/SysWOW64/regedit.exe"
 [[ ! -f $system64 ]] && arch="x86" || arch="x64"
 echo "${arch} found";
 
-debugPause
+#debugPause
 
 # set osn path names based on the osid set in the FOG WebGui
 case $osid in
@@ -69,7 +69,7 @@ if [[ ! -d "${remotedriverpath}" ]]; then
 fi
 echo "Ready";
 
-debugPause
+#debugPause
 
 [[ ! -d $clientdriverpath ]] && mkdir -p "$clientdriverpath" >/dev/null 2>&1
 echo "In Progress"
@@ -79,7 +79,7 @@ rsync -aqzI "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
 [[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$machine/$osn/$arch]"
 
 echo "Done"
-debugPause
+#debugPause
 
 dots "Setting Windows Driver Store Location"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
@@ -93,26 +93,39 @@ y
 EOFREG
 
 echo "Done"
+#debugPause
 
 dots "Setting PowerShell ExecutionPolicy"
-regfile="/ntfs/Windows/System32/config/SOFTWARE"
-key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell\ExecutionPolicy"
+# regfile="/ntfs/Windows/System32/config/SOFTWARE"
+# key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell\ExecutionPolicy"
+# value="RemoteSigned"
+# reged -e "$regfile" <<EOFREG
+# ed $key
+# $value
+# q
+# y
+# EOFREG
+
+key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"
+name="ExecutionPolicy"
 value="RemoteSigned"
+
 reged -e "$regfile" &>/dev/null <<EOFREG
-ed $key
+cd $key
+nv 1 $name
+ed $name
 $value
 q
 y
 EOFREG
 
 echo "Done"
+debugPause
 
 dots "Configuring Auto Login"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 
 key="\Microsoft\Windows NT\CurrentVersion\Winlogon"
-
-name2="AutoLogonCount"
 
 name1="AutoAdminLogon"
 value1="1"
@@ -139,7 +152,7 @@ EOFREG
 #debugPause
 
 #set count
-reged -e "$regfile" <<EOFREG
+reged -e "$regfile" &>/dev/null <<EOFREG
 cd $key
 nv 4 $name2
 ed $name2
@@ -151,7 +164,7 @@ EOFREG
 debugPause
 
 #set username
-reged -e "$regfile" <<EOFREG
+reged -e "$regfile" &>/dev/null <<EOFREG
 cd $key
 nv 1 $name3
 ed $name3
@@ -163,7 +176,7 @@ EOFREG
 debugPause
 
 #set password
-reged -e "$regfile" <<EOFREG
+reged -e "$regfile" &>/dev/null <<EOFREG
 cd $key
 nv 1 $name4
 ed $name4
