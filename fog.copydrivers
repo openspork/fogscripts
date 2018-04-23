@@ -30,8 +30,6 @@ echo "${machine} Identified";
 
 # Removes spaces, make lowercase in machine name, works better with path definitions
 
-#machine="${machine%"${machine##*[![:space:]]}"}";
-
 machine=$(echo $machine | sed -e 's/ //g' | tr '[:upper:]' '[:lower:]')
 
 dots "Verifying we've found the OS disk"
@@ -46,8 +44,6 @@ dots "Verifying target Arch"
 system64="/ntfs/Windows/SysWOW64/regedit.exe"
 [[ ! -f $system64 ]] && arch="x86" || arch="x64"
 echo "${arch} found";
-
-#debugPause
 
 # set osn path names based on the osid set in the FOG WebGui
 case $osid in
@@ -74,6 +70,7 @@ echo "Ready";
 [[ ! -d $clientdriverpath ]] && mkdir -p "$clientdriverpath" >/dev/null 2>&1
 echo "In Progress"
 
+#perform copy
 rsync -aqzI "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
 
 [[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$machine/$osn/$arch]"
@@ -81,6 +78,7 @@ rsync -aqzI "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
 echo "Done"
 #debugPause
 
+#tell windows C:\Drivers is an inf store
 dots "Setting Windows Driver Store Location"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows\CurrentVersion\DevicePath"
@@ -95,17 +93,8 @@ EOFREG
 echo "Done"
 #debugPause
 
+#TODO - move this to shell call
 dots "Setting PowerShell ExecutionPolicy"
-# regfile="/ntfs/Windows/System32/config/SOFTWARE"
-# key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell\ExecutionPolicy"
-# value="RemoteSigned"
-# reged -e "$regfile" <<EOFREG
-# ed $key
-# $value
-# q
-# y
-# EOFREG
-
 key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"
 name="ExecutionPolicy"
 value="RemoteSigned"
@@ -122,20 +111,17 @@ EOFREG
 echo "Done"
 debugPause
 
+#configure auto login on first boot so we can bootstrap drivers
 dots "Configuring Auto Login"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 
 key="\Microsoft\Windows NT\CurrentVersion\Winlogon"
-
 name1="AutoAdminLogon"
 value1="1"
-
 name2="AutoLogonCount"
 value2="1"
-
 name3="DefaultUserName"
 value3="Administrator"
-
 name4="DefaultPassword"
 value4="Pass1234"
 
@@ -148,9 +134,6 @@ $value1
 q
 y
 EOFREG
-
-#debugPause
-
 #set count
 reged -e "$regfile" &>/dev/null <<EOFREG
 cd $key
@@ -160,9 +143,6 @@ $value2
 q
 y
 EOFREG
-
-debugPause
-
 #set username
 reged -e "$regfile" &>/dev/null <<EOFREG
 cd $key
@@ -172,9 +152,6 @@ $value3
 q
 y
 EOFREG
-
-debugPause
-
 #set password
 reged -e "$regfile" &>/dev/null <<EOFREG
 cd $key
@@ -188,7 +165,8 @@ EOFREG
 echo "Done"
 debugPause
 
-#set shell to script
+set loginshell to PoSH script
+set shell to script
 dots "Configuring driver install"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell"
@@ -204,7 +182,7 @@ EOFREG
 echo "Done"
 debugPause
 
-dots "Disabling Admin Approval Policy"
+dots "Disabling Administrator Admin Approval Policy"
 
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows\CurrentVersion\Policies\System\FilterAdministratorToken"
@@ -219,8 +197,3 @@ EOFREG
 
 echo "Done"
 debugPause
-
-# dots "Creating SetupComplete.cmd"
-# mkdir -p '/ntfs/Windows/Setup/Scripts'
-# echo 'powershell %HomeDrive%\Drivers\x64\installdrivers.ps1' >> '/ntfs/Windows/Setup/Scripts/SetupComplete.cmd'
-# echo "Done"
