@@ -1,0 +1,1 @@
+/images/drivers/standardpc(i440fx+piix,1996)/win10/x64/installdrivers.ps1
