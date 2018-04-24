@@ -44,10 +44,8 @@ $name = "Shell"
 $value = "explorer.exe"
 
 
-#New-ItemProperty -Path $registry_path -Name $name -Value $value -PropertyType String -Force | Out-Null
-#Set-ExecutionPolicy Restricted  | Out-Null
+New-ItemProperty -Path $registry_path -Name $name -Value $value -PropertyType String -Force | Out-Null
 
-PAUSE
+#PAUSE
 
-#shutdown -r -t 0
-powershell
+shutdown -r -t 0
