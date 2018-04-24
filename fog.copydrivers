@@ -94,10 +94,10 @@ echo "Done"
 #debugPause
 
 #TODO - move this to shell call
-dots "Setting PowerShell ExecutionPolicy"
-key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"
-name="ExecutionPolicy"
-value="RemoteSigned"
+#dots "Setting PowerShell ExecutionPolicy"
+#key="\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"
+#name="ExecutionPolicy"
+#value="RemoteSigned"
 
 reged -e "$regfile" &>/dev/null <<EOFREG
 cd $key
@@ -170,7 +170,7 @@ set shell to script
 dots "Configuring driver install"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell"
-value="powershell %HomeDrive%\Drivers\x64\installdrivers.ps1"
+value="powershell -ExecutionPolicy Bypass %HomeDrive%\Drivers\x64\installdrivers.ps1"
 
 reged -e "$regfile" &>/dev/null <<EOFREG
 ed $key
