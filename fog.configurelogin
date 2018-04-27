@@ -1,0 +1,85 @@
+#!/bin/bash
+
+echo "Done"
+debugPause
+
+dots 'Configuring built in Administrator login'
+
+regfile='/ntfs/Windows/System32/config/SAM'
+chntpw "$regfile" -u 'Administrator' <<EOFREG
+2
+1
+q
+y
+EOFREG
+
+echo 'Done'
+debugPause
+
+#configure auto login on first boot so we can bootstrap drivers
+dots "Configuring Auto Login"
+regfile="/ntfs/Windows/System32/config/SOFTWARE"
+
+key="\Microsoft\Windows NT\CurrentVersion\Winlogon"
+name1="AutoAdminLogon"
+value1="1"
+name2="AutoLogonCount"
+value2="1"
+name3="DefaultUserName"
+value3="Administrator"
+name4="DefaultPassword"
+value4=""
+
+#enable autologin
+reged -e "$regfile" &>/dev/null <<EOFREG
+cd $key
+nv 1 $name1
+ed $name1
+$value1
+q
+y
+EOFREG
+#set count
+reged -e "$regfile" &>/dev/null <<EOFREG
+cd $key
+nv 4 $name2
+ed $name2
+$value2
+q
+y
+EOFREG
+#set username
+reged -e "$regfile" &>/dev/null <<EOFREG
+cd $key
+nv 1 $name3
+ed $name3
+$value3
+q
+y
+EOFREG
+#remove password
+reged -e "$regfile" &>/dev/null <<EOFREG
+cd $key
+dv $name4
+q
+y
+EOFREG
+
+echo "Done"
+debugPause
+
+dots "Disabling Administrator Admin Approval Policy"
+
+regfile="/ntfs/Windows/System32/config/SOFTWARE"
+key="\Microsoft\Windows\CurrentVersion\Policies\System\FilterAdministratorToken"
+value="0"
+
+reged -e "$regfile" &>/dev/null <<EOFREG
+ed $key
+$value
+q
+y
+EOFREG
+
+echo "Done"
+debugPause
