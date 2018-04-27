@@ -5,6 +5,8 @@ $output_dir = $root_dir + '/' + 'certs'
 $exportType = [System.Security.Cryptography.X509Certificates.X509ContentType]::Cert
 $thumbprints = @()
 
+$host.ui.RawUI.WindowTitle = 'Installing drivers...'
+
 Write-Host 'Searching for driver certificates...'
 if ( ! $(Test-Path $output_dir) ) { New-Item -ItemType Directory -Name certs -Path $root_dir | Out-Null }
 
@@ -36,16 +38,18 @@ $value = "$env:HOMEDRIVE\Drivers"
 
 Write-Host 'Installing drivers...'
 New-ItemProperty -Path $registry_path -Name $name -Value $value -PropertyType String -Force | Out-Null
-pnpunattend auditsystem /L | Out-Null
+pnpunattend auditsystem /L
 Write-Host 'Done'
 
 $registry_path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 $name = "Shell"
 $value = "explorer.exe"
 
-
 New-ItemProperty -Path $registry_path -Name $name -Value $value -PropertyType String -Force | Out-Null
 
-#PAUSE
+Write-Host 'Setting Administrator password...'
+
+net user Administrator Pass1234
+PAUSE
 
 shutdown -r -t 0
