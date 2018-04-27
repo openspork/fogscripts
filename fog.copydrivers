@@ -71,7 +71,7 @@ echo "Ready";
 echo "In Progress"
 
 #perform copy
-rsync -aqzI "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
+rsync -aqzIL "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
 
 [[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$machine/$osn/$arch]"
 
