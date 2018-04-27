@@ -38,7 +38,7 @@ $value = "$env:HOMEDRIVE\Drivers"
 
 Write-Host 'Installing drivers...'
 New-ItemProperty -Path $registry_path -Name $name -Value $value -PropertyType String -Force | Out-Null
-pnpunattend auditsystem /L
+pnpunattend auditsystem /L | Out-Null
 Write-Host 'Done'
 
 $registry_path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
@@ -49,7 +49,7 @@ New-ItemProperty -Path $registry_path -Name $name -Value $value -PropertyType St
 
 Write-Host 'Setting Administrator password...'
 
-net user Administrator Pass1234
-PAUSE
+net user Administrator Pass1234 | Out-Null
+#PAUSE
 
 shutdown -r -t 0
