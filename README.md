@@ -20,21 +20,25 @@ Four pieces:
   * Scheduled rebuild of FOG deployment shares - *easy*
   * Copy FOG deployment share from MDT to FOG - **easy, DONE**
   
-* FOG Home Repo
+* FOG Home Repo:
   * Git commit new MDT share - *easy*
   * Git commit FOG configuration changes - *easy*
   * Git push to cloud repo - *easy*
   
-* FOG Cloud Repo
+* FOG Cloud Repo:
   * Function as Git server for pushes from home - *easy*
   * Function as Git server for pulls from clients - *easy*
   
-* FOG Client Servers
+* FOG Client Servers:
   * Scheduled git pull from FOG cloud repo - *easy*
   * (Non-essential) Symlink drivers in MDT share to FOG virtual driver store - *difficult*
     * Probably best to parse MDT "Out-of-Box Drivers" xml via Python
   * Script FOG vanilla deployment driver installation - **difficult, DONE**
   * Create "Boot to MDT" FOG task - **easy, DONE**
     * (Non-essential) Build to full fledged deployment task - *moderate*
-    
   
+* FOG Added Tasks
+ * Enable & clear Windows local Administrator password - *easy*
+ * Back up C:\Users to FOG share - *easy*
+ * Boot to live Lubuntu with SSH and VNC running - *moderate*
+ * Improve / chain [existing FOG advanced tasks](https://wiki.fogproject.org/wiki/index.php?title=Managing_FOG#Advanced_Tasks) into automated workflows
