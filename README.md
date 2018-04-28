@@ -36,9 +36,8 @@ Four pieces:
   * Script FOG vanilla deployment driver installation - **difficult, DONE**
   * Create "Boot to MDT" FOG task - **easy, DONE**
     * (Non-essential) Build to full fledged deployment task - *moderate*
-  
   * FOG Advanced Tasks:
     * Enable & clear Windows local Administrator password - *easy*
     * Back up C:\Users to FOG share - *easy*
     * Boot to live Lubuntu with SSH and VNC running - *moderate*
-    * Improve / chain [existing FOG advanced tasks](https://wiki.fogproject.org/wiki/index.php?title=Managing_FOG#Advanced_Tasks) into automated workflows
+    * Improve / chain [existing FOG advanced tasks](https://wiki.fogproject.org/wiki/index.php?title=Managing_FOG#Advanced_Tasks) into automated workflows - *moderate*
