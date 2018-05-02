@@ -13,7 +13,7 @@ Four pieces:
   * Scheduled rebuild of build deployment shares - *easy*
   * Capture WIM - *moderate*
     * Start capture VM - *easy*
-    * Wait for finish - *moderate*
+    * Wait for finish - *easy*
   * Update task sequence to new software / OS - *moderate*
   * Rebuild FOG MDT deploy repo - *easy*
     * Copy existing FOG MDT repo but with updated date & new WIM - (duplication script already finished) - *easy*
@@ -32,7 +32,7 @@ Four pieces:
   
 * FOG Client Servers:
   * Scheduled git pull from FOG cloud repo - *easy*
-  * (Non-essential) Symlink drivers in MDT share to FOG virtual driver store - *difficult*
+  * (Non-essential) Symlink drivers in MDT share to FOG virtual driver store - *difficult, almost done*
     * Probably best to parse MDT "Out-of-Box Drivers" xml via Python
   * Script FOG vanilla deployment driver installation - **difficult, DONE**
   * Create "Boot to MDT" FOG task - **easy, DONE**
