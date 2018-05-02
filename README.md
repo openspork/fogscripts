@@ -5,7 +5,7 @@ Four pieces:
 
 * MDT Build Environment:
   * Scheduled weekly MDT source updates - *easy*
-    * Purge of Office installer - *easy*
+    * Purge of Office installer - **easy, DONE**
     * Purge Ninite apps - *easy*
   * Scheduled weekly purge of outdated MDT sources
     * Download and import of Office installer via ODT - **moderate, DONE**
@@ -14,6 +14,7 @@ Four pieces:
   * Capture WIM - *moderate*
     * Start capture VM - *easy*
     * Wait for finish - *moderate*
+  * Update task sequence to new software / OS - *moderate*
   * Rebuild FOG MDT deploy repo - *easy*
     * Copy existing FOG MDT repo but with updated date & new WIM - (duplication script already finished) - *easy*
     * Delete old FOG MDT repo - *easy*
