@@ -90,8 +90,8 @@ q
 y
 EOFREG
 
-set loginshell to PoSH script
-set shell to script
+#set loginshell to PoSH script
+#set shell to script
 dots "Configuring driver install"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell"
