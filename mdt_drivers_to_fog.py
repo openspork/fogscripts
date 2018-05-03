@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import xmltodict
 from os import listdir, makedirs, symlink
-from os.path import basename, dirname, exists, split
+from os.path import basename, dirname, join, exists, split
 from pathlib import Path, PureWindowsPath
 from re import compile, IGNORECASE
 from fnmatch import translate
@@ -83,21 +83,25 @@ for driver_group in driver_groups:
         guids = driver_group['Member'] #list of driver guids
         
         #iterate over the member drivers and create symlinks from MDT to FOG
-        store = '/images/drivers/' + computer_name #create store, if missing
-        if not exists(store):
-            makedirs(store)
+        base_store = '/images/drivers/' + computer_name #create store, if missing
+        if not exists(base_store):
+            makedirs(base_store)
 
-        dest = '/images/drivers/' + computer_name + '/' + guid
         for guid in guids:
             raw_driver_source = driver_guid_sources[guid]
             split_driver_source = split(raw_driver_source)
-            driver_name = split_driver_source[1]
             driver_type = basename(split_driver_source[0])
-            print(driver_type, driver_name)
+            driver_name = split_driver_source[1]
 
+            type_store = base_store + '/' + driver_type
+            driver_store = type_store + '/' + driver_name
 
-            
-            #symlink(driver_guid_sources[guid], dest)
+            if not exists(type_store):
+                makedirs(type_store)
+            #if not exists(driver_store):
+                #makedirs(driver_store)
+
+            symlink(driver_guid_sources[guid], driver_store)
             #print('guid %s is found in %s' % (guid, driver_guid_sources[guid]))
             #print('create symlink from:\n%sto\n%s\n\n' % (source, dest))
 
