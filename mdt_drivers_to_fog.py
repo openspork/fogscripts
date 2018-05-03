@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 import xmltodict
-from os import listdir
-from os.path import dirname, join
+from os import listdir, makedirs, symlink
+from os.path import basename, dirname, exists, split
 from pathlib import Path, PureWindowsPath
 from re import compile, IGNORECASE
 from fnmatch import translate
 from glob import iglob
 
-#build path database to resolve mispelled paths
+#build path database to resolve paths
 paths = []
 def build_path_db():
     global paths
@@ -17,6 +17,7 @@ def build_path_db():
         paths.append(rel_path)
 build_path_db()
 
+#takes string, returns string
 def unixify_path(win_path):
     pure_win_path = PureWindowsPath(win_path)
     #print(pure_win_path)
@@ -36,7 +37,7 @@ def unixify_path(win_path):
         for path in paths:
             if pattern.match(str(path)):
                 #print('match found! %s ' % path)
-                return path
+                return str(path)
 
 
 driver_groups_xml = '/mdt/Control/DriverGroups.xml'
@@ -65,56 +66,39 @@ for driver in drivers:
     guid = driver['@guid']
     driver_source = driver['Source']
 
-    print(unixify_path(driver_source))
-
-
-
-
-    #source_inf_win = PureWindowsPath(driver['Source'])
-    #print('Windows path: %s' % source_inf_win)
-    # task 1: convert backslashes to forward slashes
-    #source_inf_posix_ci = Path(source_inf_win)
-    #print('Posix path insensitive: %s' % source_inf_posix_ci)
-    # task 2: correct for case senstivity
-
-    #if source_inf_posix_ci.exists():
-        #print('Exists: %s' % source_inf_posix_ci)
-    #else:
-        #print('Missing: %s' % source_inf_posix_ci)
-
-
-
-
-    #source_inf_posix = source_inf_posix_ci
-
-    #print('Posix path: %s' % source_inf_posix)
-
-    #get parent folder
-    #source_dir = mdt_root + '/' + dirname(source_inf_posix)
-
-    #driver_guid_sources[guid] = source_dir
+    source_inf_posix = unixify_path(driver_source)
+    source_dir = mdt_root + '/' + dirname(source_inf_posix)
+    driver_guid_sources[guid] = source_dir
     #print('guid %s points to %s' % (guid, source_dir))
-
-
-
-
-
-
-
-
 
 #   now that we can efficiently convert guids into paths we can build symlinks
 
-# driver_groups = driver_groups['groups']['group']
+#print(driver_guid_sources)
 
-# for driver_group in driver_groups:
-#     if 'Member' in driver_group: # only process if the group has drivers
-#         name = driver_group['Name'] # get the name so we can name our FOG store
-#         guids = driver_group['Member'] #list of driver guids
+driver_groups = driver_groups['groups']['group']
+
+for driver_group in driver_groups:
+    if 'Member' in driver_group: # only process if the group has drivers
+        computer_name = driver_group['Name'] # get the name so we can name our FOG store
+        guids = driver_group['Member'] #list of driver guids
         
-#         #iterate over the member drivers and create symlinks from MDT to FOG
-#         for guid in guids:
-#             print('guid %s is found in %s' % (guid, driver_guid_sources[guid]))
-#             print('create symlink to %s' % name)
+        #iterate over the member drivers and create symlinks from MDT to FOG
+        store = '/images/drivers/' + computer_name #create store, if missing
+        if not exists(store):
+            makedirs(store)
+
+        dest = '/images/drivers/' + computer_name + '/' + guid
+        for guid in guids:
+            raw_driver_source = driver_guid_sources[guid]
+            split_driver_source = split(raw_driver_source)
+            driver_name = split_driver_source[1]
+            driver_type = basename(split_driver_source[0])
+            print(driver_type, driver_name)
+
+
+            
+            #symlink(driver_guid_sources[guid], dest)
+            #print('guid %s is found in %s' % (guid, driver_guid_sources[guid]))
+            #print('create symlink from:\n%sto\n%s\n\n' % (source, dest))
 
 
