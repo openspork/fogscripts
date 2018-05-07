@@ -4,21 +4,19 @@
 Four pieces:
 
 * MDT Build Environment:
-  * Scheduled weekly MDT source updates - *easy*
+  * Scheduled weekly MDT source updates - **easy, DONE**
     * Purge of Office installer - **easy, DONE**
     * Purge Ninite apps - **easy, DONE**
-  * Scheduled weekly purge of outdated MDT sources
+  * Scheduled weekly purge of outdated MDT sources - **moderate, DONE**
     * Download and import of Office installer via ODT - **moderate, DONE**
     * Download and import of specified Ninite apps - **moderate, DONE**
+  * Update task sequence to new software / OS - *moderate*
   * Scheduled rebuild of build deployment shares - *easy*
   * Capture WIM - *moderate*
     * Start capture VM - *easy*
     * Wait for finish - *easy*
-  * Update task sequence to new software / OS - *moderate*
-  * Rebuild FOG MDT deploy repo - *easy*
-    * Copy existing FOG MDT repo but with updated date & new WIM - (duplication script already finished) - *easy*
-    * Delete old FOG MDT repo - *easy*
-  * Scheduled rebuild of FOG deployment shares - *easy*
+  * Update task sequence to new OS - *moderate, DONE*
+  * Scheduled rebuild of FOG deployment shares - **easy, DONE**
   * Copy FOG deployment share from MDT to FOG - **easy, DONE**
   
 * FOG Home Repo:
@@ -32,7 +30,7 @@ Four pieces:
   
 * FOG Client Servers:
   * Scheduled git pull from FOG cloud repo - *easy*
-  * (Non-essential) Symlink drivers in MDT share to FOG virtual driver store - *difficult, almost done*
+  * Symlink drivers in MDT share to FOG virtual driver store - *difficult, almost done*
     * Probably best to parse MDT "Out-of-Box Drivers" xml via Python
   * Script FOG vanilla deployment driver installation - **difficult, DONE**
   * Create "Boot to MDT" FOG task - **easy, DONE**
