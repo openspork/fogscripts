@@ -1,1 +1,0 @@
-﻿Copy-Item -Path M:\MDTFogDeploy\ -Destination \\fogserver.build.local\MDTFogDeploy$ -Recurse -Force

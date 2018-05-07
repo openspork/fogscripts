@@ -1,0 +1,1 @@
+﻿Copy-Item -Path M:\MDTFogDeploy\ -Destination \\fog\MDTFogDeploy$ -Recurse -Force

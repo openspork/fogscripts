@@ -14,9 +14,9 @@ Get-ChildItem $OfficeDir | Where {$_.Extension -match '.xml'} | % {
     $ConfigFileName = $_.Name
 
     #Create a folder for download and populate
-    #New-Item -Path "$OfficeDir\$OfficeVer" -ItemType Directory
-    #Copy-Item "$OfficeDir\setup.exe" "$OfficeDir\$OfficeVer"
-    #dCopy-Item $_.FullName "$OfficeDir\$OfficeVer"
+    New-Item -Path "$OfficeDir\$OfficeVer" -ItemType Directory
+    Copy-Item "$OfficeDir\setup.exe" "$OfficeDir\$OfficeVer"
+    Copy-Item $_.FullName "$OfficeDir\$OfficeVer"
 
     #Assemble download command
     $Dir = "$OfficeDir\$OfficeVer"
@@ -26,7 +26,7 @@ Get-ChildItem $OfficeDir | Where {$_.Extension -match '.xml'} | % {
     #Run in holding dir (command dumps to working dir)
     cd $Dir
     Write-Host "Executing $Cmd"
-    #Invoke-Expression "$Exe $Args"
+    Invoke-Expression "$Exe $Args"
 
     #Import app
     Import-MDTApplication `
