@@ -6,7 +6,7 @@ Four pieces:
 * MDT Build Environment:
   * Scheduled weekly MDT source updates - *easy*
     * Purge of Office installer - **easy, DONE**
-    * Purge Ninite apps - *easy*
+    * Purge Ninite apps - **easy, DONE**
   * Scheduled weekly purge of outdated MDT sources
     * Download and import of Office installer via ODT - **moderate, DONE**
     * Download and import of specified Ninite apps - **moderate, DONE**
