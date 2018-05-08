@@ -34,7 +34,7 @@ Four pieces:
   
 * FOG Client Servers:
   * Scheduled git pull from FOG cloud repo - *easy*
-  * Symlink drivers in MDT share to FOG virtual driver store - *difficult, almost done*
+  * Symlink drivers in MDT share to FOG virtual driver store - **difficult, DONE**
     * Probably best to parse MDT "Out-of-Box Drivers" xml via Python
   * Script FOG vanilla deployment driver installation - **difficult, DONE**
   * Create "Boot to MDT" FOG task - **easy, DONE**
