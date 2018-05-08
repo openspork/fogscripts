@@ -10,13 +10,17 @@ Four pieces:
   * Scheduled weekly purge of outdated MDT sources - **moderate, DONE**
     * Download and import of Office installer via ODT - **moderate, DONE**
     * Download and import of specified Ninite apps - **moderate, DONE**
-  * Update task sequence to new software / OS - *moderate*
-  * Scheduled rebuild of build deployment shares - *easy*
+  * Update task sequence to new Office / Ninite - *moderate*
+    * Update build task sequence with new Office - *moderate*
+    * Update build task sequence with new Ninite - *moderate*
+    * Rebuild of build deployment shares - *easy*
   * Capture WIM - *moderate*
     * Start capture VM - *easy*
     * Wait for finish - *easy*
-  * Update task sequence to new OS - *moderate, DONE*
-  * Scheduled rebuild of FOG deployment shares - **easy, DONE**
+  * Update deploy task sequence to new OS
+    * Purge deployment OS - **easy, DONE**
+    * Update deploy TS with new OS - **moderate, DONE**
+    * Rebuild of FOG deployment shares - **easy, DONE**
   * Copy FOG deployment share from MDT to FOG - **easy, DONE**
   
 * FOG Home Repo:
