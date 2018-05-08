@@ -81,9 +81,9 @@ for driver_group in driver_groups:
         unixy_name = str(Path(PureWindowsPath(raw_name)))
 
         split_driver_group = split(unixy_name) # get the name so we can name our FOG store
-        model_name = split_driver_group[1]
-        make_name = basename(split_driver_group[0])
-        os_name = dirname(split_driver_group[0])
+        model_name = ''.join(split_driver_group[1].split()).lower()
+        make_name = ''.join(basename(split_driver_group[0]).split()).lower()
+        os_name = ''.join(dirname(split_driver_group[0]).split()).lower()
 
         print('OS: %s\nMake: %s\nModel: %s\n' % (os_name, make_name, model_name))
         guids = driver_group['Member'] #list of driver guids
