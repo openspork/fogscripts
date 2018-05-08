@@ -50,7 +50,7 @@ $latest_wims | % {
     $latest_wim_name = $_.Name.Replace('.wim','')  
 
     #import last captured WIM
-    #Import-MDTOperatingSystem -Path "MDTShare:\Operating Systems\$($os)" -SourceFile $latest_wim.FullName -DestinationFolder $latest_wim_name -Verbose
+    Import-MDTOperatingSystem -Path "MDTShare:\Operating Systems\$($os)" -SourceFile $latest_wim.FullName -DestinationFolder $latest_wim_name -Verbose
 
     #get the guid of the new OS
     $new_os_guid = (Get-ChildItem "MDTShare:\Operating Systems\$($os)" | ? { $_.Name -match $latest_wim_name }).guid
