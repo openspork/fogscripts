@@ -20,7 +20,6 @@ build_path_db()
 #takes string, returns string
 def unixify_path(win_path):
     pure_win_path = PureWindowsPath(win_path)
-    #print(pure_win_path)
     posix_path = Path(pure_win_path)
 
     #check if path is valid
@@ -71,19 +70,35 @@ for driver in drivers:
     driver_guid_sources[guid] = source_dir
     #print('guid %s points to %s' % (guid, source_dir))
 
-#   now that we can efficiently convert guids into paths we can build symlinks
-
-#print(driver_guid_sources)
+#now that we can efficiently convert guids into paths we can build symlinks
 
 driver_groups = driver_groups['groups']['group']
 
 for driver_group in driver_groups:
     if 'Member' in driver_group: # only process if the group has drivers
-        computer_name = driver_group['Name'] # get the name so we can name our FOG store
+        raw_name = driver_group['Name']
+
+        unixy_name = str(Path(PureWindowsPath(raw_name)))
+
+        split_driver_group = split(unixy_name) # get the name so we can name our FOG store
+        model_name = split_driver_group[1]
+        make_name = basename(split_driver_group[0])
+        os_name = dirname(split_driver_group[0])
+
+        print('OS: %s\nMake: %s\nModel: %s\n' % (os_name, make_name, model_name))
         guids = driver_group['Member'] #list of driver guids
         
         #iterate over the member drivers and create symlinks from MDT to FOG
-        base_store = '/images/drivers/' + computer_name #create store, if missing
+        specific_store = [os_name, make_name, model_name]
+
+
+        base_store = '/images/drivers/'
+
+        full_store = join(base_store, os_name, make_name, model_name)
+
+        #print(full_store)
+
+        #print(base_store)
         if not exists(base_store):
             makedirs(base_store)
 
@@ -93,16 +108,13 @@ for driver_group in driver_groups:
             driver_type = basename(split_driver_source[0])
             driver_name = split_driver_source[1]
 
-            type_store = base_store + '/' + driver_type
+            type_store = full_store + '/' + driver_type
             driver_store = type_store + '/' + driver_name
 
             if not exists(type_store):
                 makedirs(type_store)
-            #if not exists(driver_store):
-                #makedirs(driver_store)
 
             symlink(driver_guid_sources[guid], driver_store)
-            #print('guid %s is found in %s' % (guid, driver_guid_sources[guid]))
-            #print('create symlink from:\n%sto\n%s\n\n' % (source, dest))
+
 
 
