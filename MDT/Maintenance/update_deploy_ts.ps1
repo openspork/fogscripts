@@ -4,29 +4,13 @@
 #Script variables
 $root_dir = 'M:'
 $os = 'Windows 10 x64'
-$deploy_ts_name = 'deploy'
+$wim_count = 4
 
 Add-PSSnapIn Microsoft.BDD.PSSnapIn
 New-PSDrive -Name 'MDTShare' -PSProvider MDTProvider -Root "$root_dir\MDTFogDeploy" | Out-Null
 
-#find last captured WIM
-$latest_wim = (Get-ChildItem -Path "$root_dir\MDTBuildLab\Captures" | sort CreationTime | Select-Object -Last 1)
-
-#generate name from wim name
-$latest_wim_name = $latest_wim.Name.Replace('.wim','')
-
-#TODO check it is recent & handle error
-
-#import last captured WIM
-#Import-MDTOperatingSystem -Path "MDTShare:\Operating Systems\$($os)" -SourceFile $latest_wim.FullName -DestinationFolder $latest_wim_name -Verbose
-
-#get the guid of the new OS
-$new_os_guid = (Get-ChildItem "MDTShare:\Operating Systems\$($os)" | ? { $_.Name -match $latest_wim_name }).guid
-
-#update each task sequence
-Get-ChildItem "MDTShare:\Task Sequences" | % {
-    $deploy_ts_name = $_.Name
-    Write-Host "Updating $($_.Name) Task Sequence"
+function update_ts ($deploy_ts_name, $new_os_guid) {
+    Write-Host "Updating task sequence: $($deploy_ts_name)"
 
     #open the task sequence XML file for editing
     $ts_xml_path = "M:\MDTFogDeploy\Control\$deploy_ts_name\ts.xml"
@@ -37,7 +21,7 @@ Get-ChildItem "MDTShare:\Task Sequences" | % {
 
     #update the OSGUID properties
     $global_var_os_guid_node | % {
-        Write-Host "Updating global variables: $($_.'#text') to $new_os_guid"
+        Write-Host "Updating global variables: $($deploy_ts_name.'#text') to $new_os_guid"
         $_.'#text' = $new_os_guid
     }
 
@@ -50,6 +34,30 @@ Get-ChildItem "MDTShare:\Task Sequences" | % {
 
     #save the XML
     $ts_xml.Save($ts_xml_path)
+}
+
+
+
+#find last N captured WIMs
+$latest_wims = (Get-ChildItem -Path "$root_dir\MDTBuildLab\Captures" | sort CreationTime | Select-Object -Last $wim_count)
+
+#for each WIM
+$latest_wims | % {
+    Write-Host "Processing WIM: $($_)"
+    #TODO check it is recent & handle error
+
+    #generate name from wim name
+    $latest_wim_name = $_.Name.Replace('.wim','')  
+
+    #import last captured WIM
+    #Import-MDTOperatingSystem -Path "MDTShare:\Operating Systems\$($os)" -SourceFile $latest_wim.FullName -DestinationFolder $latest_wim_name -Verbose
+
+    #get the guid of the new OS
+    $new_os_guid = (Get-ChildItem "MDTShare:\Operating Systems\$($os)" | ? { $_.Name -match $latest_wim_name }).guid
+
+    #update corresponding task sequence
+    
+    update_ts $latest_wim_name $new_os_guid
 }
 
 #update the deployment share
