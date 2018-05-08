@@ -31,6 +31,7 @@ echo "${machine} Identified";
 # Removes spaces, make lowercase in machine name, works better with path definitions
 
 machine=$(echo $machine | sed -e 's/ //g' | tr '[:upper:]' '[:lower:]')
+manu=$(echo $manu | sed -e 's/ //g' | tr '[:upper:]' '[:lower:]')
 
 dots "Verifying we've found the OS disk"
 if [[ ! -d /ntfs/windows && ! -d /ntfs/Windows && ! -d /ntfs/WINDOWS ]]; then
@@ -55,11 +56,12 @@ esac
 
 dots "Preparing Drivers"
 clientdriverpath="/ntfs/Drivers"
-remotedriverpath="/images/drivers/$machine/$osn/$arch"
+#remotedriverpath="/images/drivers/$machine/$osn/$arch"
+remotedriverpath="/images/drivers/$osn$arch/$manu/$machine"
 
 if [[ ! -d "${remotedriverpath}" ]]; then
     echo "failed";
-    echo " ! Driver package not found for ${machine}/$osn/$arch ! ";
+    echo " ! Driver package not found for $osn$arch/$manu/$machine ! ";
     debugPause;
     return;
 fi
@@ -73,7 +75,7 @@ echo "In Progress"
 #perform copy
 rsync -aqzIL "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
 
-[[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$machine/$osn/$arch]"
+[[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$osn$arch/$manu/$machine]"
 
 echo "Done"
 #debugPause
