@@ -10,9 +10,9 @@ Four pieces:
   * Scheduled weekly purge of outdated MDT sources - **moderate, DONE**
     * Download and import of Office installer via ODT - **moderate, DONE**
     * Download and import of specified Ninite apps - **moderate, DONE**
-  * Update task sequence to new Office / Ninite - *moderate*
-    * Update build task sequence with new Office - *moderate*
-    * Update build task sequence with new Ninite - *moderate*
+  * Update task sequence to new Office / Ninite - *difficult*
+    * Update build task sequence with new Office - *difficult*
+    * Update build task sequence with new Ninite - *difficult*
     * Rebuild of build deployment shares - *easy*
   * Capture WIM - *moderate*
     * Start capture VM - *easy*
