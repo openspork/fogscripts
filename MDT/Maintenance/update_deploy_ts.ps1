@@ -36,8 +36,6 @@ function update_ts ($deploy_ts_name, $new_os_guid) {
     $ts_xml.Save($ts_xml_path)
 }
 
-
-
 #find last N captured WIMs
 $latest_wims = (Get-ChildItem -Path "$root_dir\MDTBuildLab\Captures" | sort CreationTime | Select-Object -Last $wim_count)
 
@@ -56,7 +54,6 @@ $latest_wims | % {
     $new_os_guid = (Get-ChildItem "MDTShare:\Operating Systems\$($os)" | ? { $_.Name -match $latest_wim_name }).guid
 
     #update corresponding task sequence
-    
     update_ts $latest_wim_name $new_os_guid
 }
 
