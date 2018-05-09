@@ -4,11 +4,11 @@
 Goal:  Continually generate, package, and distribute MDT deployment shares for remote deployment via a 100% hands off process
 
 Basic flow:
-1.)  Build MDT share
-2.)  Copy to local Git repo
-3.)  Push to cloud Git repo
-4.)  Pull to client git repo
-5.)  Deploy via FOG
+1. Build MDT share
+2. Copy to local Git repo
+3. Push to cloud Git repo
+4. Pull to client git repo
+5. Deploy via FOG
 
 Four main elements:
 
