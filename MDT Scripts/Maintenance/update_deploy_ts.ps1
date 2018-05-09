@@ -4,7 +4,7 @@
 #Script variables
 $root_dir = 'M:'
 $os = 'Windows 10 x64'
-$wim_count = 4
+$wim_count = 1
 
 Add-PSSnapIn Microsoft.BDD.PSSnapIn
 New-PSDrive -Name 'MDTShare' -PSProvider MDTProvider -Root "$root_dir\MDTFogDeploy" | Out-Null
@@ -20,8 +20,10 @@ function update_ts ($deploy_ts_name, $new_os_guid) {
     $global_var_os_guid_node = ($ts_xml | Select-Xml -XPath "//sequence/globalVarList/variable[@name='OSGUID']").Node
 
     #update the OSGUID properties
+    $i = 0
     $global_var_os_guid_node | % {
-        Write-Host "Updating global variables: $($deploy_ts_name.'#text') to $new_os_guid"
+        Write-Host "Updating global variables: $($global_var_os_guid_node[$i].'#text') to $new_os_guid"
+        $i ++
         $_.'#text' = $new_os_guid
     }
 
@@ -48,7 +50,7 @@ $latest_wims | % {
     $latest_wim_name = $_.Name.Replace('.wim','')  
 
     #import last captured WIM
-    Import-MDTOperatingSystem -Path "MDTShare:\Operating Systems\$($os)" -SourceFile $latest_wim.FullName -DestinationFolder $latest_wim_name -Verbose
+    #Import-MDTOperatingSystem -Path "MDTShare:\Operating Systems\$($os)" -SourceFile $_.FullName -DestinationFolder $latest_wim_name -Verbose
 
     #get the guid of the new OS
     $new_os_guid = (Get-ChildItem "MDTShare:\Operating Systems\$($os)" | ? { $_.Name -match $latest_wim_name }).guid
