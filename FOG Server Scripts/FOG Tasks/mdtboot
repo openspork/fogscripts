@@ -1,0 +1,1 @@
+&& imgfree && initrd http://${fog-ip}/fog/isoimg/LiteTouchPE_x64.iso && chain memdisk iso raw

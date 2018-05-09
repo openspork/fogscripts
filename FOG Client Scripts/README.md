@@ -1,0 +1,2 @@
+These scripts on the FOG client when performing a vanilla (non-MDT) "Deploy" task.  The fog.* scripts run against the offline Windows disk.  They slipstream the drivers into the image and set installdrivers.ps1 to run as the initial shell via offline registry edits.  The installdrivers.ps1 scripts pulls and installs certificates from the driver repo.  Once certificates are installed the drivers are installed.
+
