@@ -1,7 +1,16 @@
 # fogscripts
-## Comprehensive MDT &amp; FOG deployment / toolkit
+## Comprehensive MDT &amp; FOG Deployment Toolkit
 
-Four pieces:
+Goal:  Continually generate, package, and distribute MDT deployment shares for remote deployment via a 100% hands off process
+
+Basic flow:
+1.)  Build MDT share
+2.)  Copy to local Git repo
+3.)  Push to cloud Git repo
+4.)  Pull to client git repo
+5.)  Deploy via FOG
+
+Four main elements:
 
 * MDT Build Environment:
   * Scheduled weekly MDT source updates - **easy, DONE**
@@ -21,7 +30,7 @@ Four pieces:
     * Purge deployment OS - **easy, DONE**
     * Update deploy TS with new OS - **moderate, DONE**
     * Rebuild of FOG deployment shares - **easy, DONE**
-  * Copy FOG deployment share from MDT to FOG - **easy, DONE**
+  * Copy FOG deployment share from MDT to FOG home repo - **easy, DONE**
   
 * FOG Home Repo:
   * Git commit new MDT share - *trivial*
