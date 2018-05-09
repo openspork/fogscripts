@@ -10,10 +10,10 @@ Four pieces:
   * Scheduled weekly purge of outdated MDT sources - **moderate, DONE**
     * Download and import of Office installer via ODT - **moderate, DONE**
     * Download and import of specified Ninite apps - **moderate, DONE**
-  * Update task sequence to new Office / Ninite - *difficult*
-    * Update build task sequence with new Office - *difficult*
-    * Update build task sequence with new Ninite - *difficult*
-    * Rebuild of build deployment shares - *easy*
+  * Update task sequence to new Office / Ninite - **difficult, DONE**
+    * Update build task sequence with new Office - **difficult, DONE**
+    * Update build task sequence with new Ninite - **difficult, DONE**
+    * Rebuild of build deployment shares - **easy, DONE**
   * Capture WIM - *moderate*
     * Start capture VM - *easy*
     * Wait for finish - *easy*
@@ -38,7 +38,7 @@ Four pieces:
     * Probably best to parse MDT "Out-of-Box Drivers" xml via Python - **difficult, DONE**
   * Script FOG vanilla deployment driver installation - **difficult, DONE**
   * Create "Boot to MDT" FOG task - **easy, DONE**
-    * (Non-essential) Build to full fledged deployment task - *moderate*
+    * (Non-essential) Build to full fledged deployment task via APIs - *moderate*
   * FOG Advanced Tasks:
     * Enable & clear Windows local Administrator password - *easy*
     * Back up C:\Users to FOG share - *easy*
