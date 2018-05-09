@@ -17,6 +17,10 @@ Write-Host 'Beginning build TS update' -BackgroundColor DarkGreen
 PAUSE
 #capture WIMs -- pending full environment, need HV in build domain
 PAUSE
+#purge deploy OS
+Write-Host 'Beginning deployment OS purge' -BackgroundColor DarkGreen
+.\purge_deploy_os.ps1
+PAUSE
 #update deploy task sequence & update deployment share
 Write-Host 'Beginning deploy TS update' -BackgroundColor DarkGreen
 .\update_deploy_ts.ps1
