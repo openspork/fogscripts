@@ -48,16 +48,20 @@ echo "${arch} found";
 
 # set osn path names based on the osid set in the FOG WebGui
 case $osid in
-    5) osn="win7" ;;
-    6) osn="win8" ;;
-    7) osn="win8.1" ;;
-    9) osn="win10" ;;
+    5) osn="windows7" ;;
+    6) osn="windows8" ;;
+    7) osn="windows8.1" ;;
+    9) osn="windows10" ;;
 esac
 
 dots "Preparing Drivers"
 clientdriverpath="/ntfs/Drivers"
 #remotedriverpath="/images/drivers/$machine/$osn/$arch"
-remotedriverpath="/images/drivers/$osn$arch/$manu/$machine"
+#mount via SMB to properly follow symlinks
+mkdir /drivers
+mount -t cifs -o user=guest //10.99.99.1/images/drivers /drivers
+
+remotedriverpath="/drivers/$osn$arch/$manu/$machine"
 
 if [[ ! -d "${remotedriverpath}" ]]; then
     echo "failed";
@@ -73,9 +77,13 @@ echo "Ready";
 echo "In Progress"
 
 #perform copy
-rsync -aqzIL "$remotedriverpath" "$clientdriverpath" --progress >/dev/null 2>&1
 
-[[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$osn$arch/$manu/$machine]"
+rsync -aqzIL "$remotedriverpath" "$clientdriverpath" #--progress >/dev/null 2>&1
+
+#[[ ! $? -eq 0 ]] && handleError "Failed to download driver information for [$osn$arch/$manu/$machine]"
+
+[[ ! $? -eq 0 ]] && handleError "Failed to download driver information for $remotedriverpath"
+
 
 echo "Done"
 #debugPause
@@ -97,7 +105,7 @@ EOFREG
 dots "Configuring driver install"
 regfile="/ntfs/Windows/System32/config/SOFTWARE"
 key="\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell"
-value="powershell -ExecutionPolicy Bypass %HomeDrive%\Drivers\x64\installdrivers.ps1"
+value="powershell -ExecutionPolicy Bypass %HomeDrive%\Drivers\installdrivers.ps1"
 
 reged -e "$regfile" &>/dev/null <<EOFREG
 ed $key

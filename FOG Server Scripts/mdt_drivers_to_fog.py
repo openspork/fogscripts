@@ -8,6 +8,7 @@
 
 import xmltodict
 from os import listdir, makedirs, symlink
+from shutil import copytree
 from os.path import basename, dirname, join, exists, split
 from pathlib import Path, PureWindowsPath
 from re import compile, IGNORECASE
@@ -124,6 +125,6 @@ for driver_group in driver_groups:
 
             #symlink from the MDT source to the driver name in driver type store
             symlink(driver_guid_sources[guid], driver_store)
-
+            #copytree(driver_guid_sources[guid], driver_store)
 
 
