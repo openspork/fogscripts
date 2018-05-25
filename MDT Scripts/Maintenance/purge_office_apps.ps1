@@ -4,11 +4,14 @@ $mdtOfficePath = "MDTShare:\Applications\Office"
 $OfficeDir =  "$RootDir\Sources\Applications\Office"
 
 Add-PSSnapIn Microsoft.BDD.PSSnapIn
-New-PSDrive -Name "MDTShare" -PSProvider MDTProvider -Root "$RootDir\MDTBuildLab"
+New-PSDrive -Name "MDTShare" -PSProvider MDTProvider -Root "$RootDir\MDTBuildLab" | Out-Null
 
-Get-ChildItem -Path $mdtOfficePath | % { 
-    Write-Host "Removing $($_.Name)"
+#FIX DELETION OF ALL
+Get-ChildItem -Path $mdtOfficePath | % {
+    Write-Host "Removing $mdtOfficePath\$($_.Name)"
     Remove-Item "$mdtOfficePath\$($_.Name)"
 }
 
 Get-ChildItem -Path $OfficeDir -Directory | Remove-Item -Recurse
+
+Remove-PSDrive -Name "MDTShare" | Out-Null

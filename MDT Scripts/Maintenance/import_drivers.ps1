@@ -14,7 +14,7 @@ Get-ChildItem "$RootDir\Sources\Out-of-Box Drivers" | % {
     New-Item -Path "MDTSHARE:\Out-of-Box Drivers" -Enable "True" -Name "$OS" -Comments "" -ItemType "Folder" -Verbose
 
     Get-ChildItem $_.FullName | % {
-        if ( $_.Name -eq "Dell" ) { $Manufacturer = 'Dell Inc' }
+        if ( $_.Name -eq "Dell" ) { $Manufacturer = 'Dell Inc.' }
         else { $Manufacturer = $_.Name }
         Write-Host "Creating Folder $Manufacturer"
         New-Item -Path "MDTSHARE:\Out-of-Box Drivers\$OS" -Enable "True" -Name $Manufacturer -Comments "" -ItemType "Folder" -Verbose

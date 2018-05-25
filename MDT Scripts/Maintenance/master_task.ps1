@@ -6,10 +6,9 @@ Write-Host 'Beginning Office purge' -BackgroundColor DarkGreen
 .\purge_office_apps.ps1
 Write-Host 'Beginning Ninite purge' -BackgroundColor DarkGreen
 .\purge_ninite_apps.ps1
-PAUSE
+#PAUSE
 #redownload & package build apps
-#.\import_ninite_apps.ps1
-#.\import_office_apps.ps1
+.\import_office_apps.ps1
 
 #update build task sequence & update deployment share
 Write-Host 'Beginning build TS update' -BackgroundColor DarkGreen

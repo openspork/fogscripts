@@ -3,6 +3,9 @@
 $RootDir = 'M:'
 $OfficeDir =  "$RootDir\Sources\Applications\Office"
 
+#Save the starting location
+$startPath = $(Split-Path $MyInvocation.MyCommand.Path)
+
 #Import MDT module & create MDT PSDrive
 Import-Module "$Env:ProgramFiles\Microsoft Deployment Toolkit\bin\MicrosoftDeploymentToolkit.psd1"
 New-PSDrive -Name "MDTSHARE" -PSProvider MDTProvider -Root "M:\MDTBuildLab"
@@ -24,7 +27,7 @@ Get-ChildItem $OfficeDir | Where {$_.Extension -match '.xml'} | % {
     $Args = "/download $OfficeDir\$ConfigFileName"
 
     #Run in holding dir (command dumps to working dir)
-    cd $Dir
+    Set-Location $Dir
     Write-Host "Executing $Cmd"
     Invoke-Expression "$Exe $Args"
 
@@ -42,5 +45,8 @@ Get-ChildItem $OfficeDir | Where {$_.Extension -match '.xml'} | % {
         -DestinationFolder "Microsoft $OfficeVer" `
         -Verbose
 }
+
+#revert working dir
+Set-Location $startPath
 
 Remove-PSDrive MDTShare
